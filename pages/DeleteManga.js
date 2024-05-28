@@ -3,17 +3,17 @@ import { TouchableOpacity, ScrollView, SafeAreaView, Image, ImageBackground, Sty
 //import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Btn from './component/button/bouton';
+import Btn from '../component/button/bouton';
 
 import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { useRoute } from '@react-navigation/native';
 
 
-import Navbar from './component/navbar/navbar';
-import TitleTextColor from './component/title/title';
+import Navbar from '../component/navbar/navbar';
+import TitleTextColor from '../component/title/title';
 
-export default function DetailsManga() {
+export default function DeleteManga() {
     const route = useRoute();
     const { manga_id } = route.params;
 
@@ -33,7 +33,6 @@ export default function DetailsManga() {
     const nav = useNavigation();
 
     useEffect(() => {
-        getOneManga(manga_id);
     }, []);
 
     // Fonction qui fonctionne avec l'import AsyncStorage
@@ -58,10 +57,10 @@ export default function DetailsManga() {
         await AsyncStorage.removeItem('token')
     }
 
-    const getOneManga = async (manga_id) => {
+    const deleteManga = async (manga_id) => {
         try {
-            const res = await fetch(`http://192.168.1.59:3000/manga/${manga_id}`, {
-                method: 'GET',
+            const res = await fetch(`http://192.168.1.59:3000/manga/delete/${manga_id}`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -70,48 +69,42 @@ export default function DetailsManga() {
 
             //setListManga(data);
             console.log(mangaInfo);
-            setMangaTitre(mangaInfo.data.titre);
-            setMangaResume(mangaInfo.data.resume);
-            setMangaAuteur(mangaInfo.data.auteur);
-            setMangaCategorie(mangaInfo.data.nom_categorie);
-
+            nav.navigate('Accueil');
 
         } catch (error) {
             console.log('Erreur 1:', error);
         }
     }
-    
+
     
     const [loaded] = useFonts({
-        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
-        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
-        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+        "GothamLight": require('../assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('../assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('../assets/fonts/GothamBold.ttf'),
       });
       if (!loaded) {
           return <Text>Chargement de la font</Text>;
       }
 
+
     return (
         <ImageBackground
             style={{ flex: 1 }}
             resizeMode='cover'
-            source={require('./assets/bg.jpg')}
+            source={require('../assets/bg.jpg')}
         >
             <SafeAreaView>
                 <View style={styles.container}>
-                    <Image style={styles.logo} source={require('./assets/logo.png')} />
+                    <Image style={styles.logo} source={require('../assets/logo.png')} />
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
-                        <Text style={styles.textTitle_welcome}>{mangaTitre}</Text>
+                        <Text style={styles.textTitle_welcome}>Suppression en cours</Text>
                         <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
+                        <Text style={styles.textStd}>Êtes-vous sûr(e) de vouloir supprimer ce manga ? :(</Text>
                     </View>
-                    <ScrollView style={[{ width: '80%' }]}>
-                        <Text style={styles.text}>Auteur : {mangaAuteur}</Text>
-                        <Text style={styles.text}>Catégorie : {mangaCategorie}</Text>
-                        <Text style={styles.text}>Résumé : {mangaResume}</Text>
-                    </ScrollView>
                     <View style={styles.viewBtn}>
-                        <Btn onPress={() => nav.navigate('DeleteManga', { manga_id })} textButton={'SUPPRIMER LE MANGA'} backgroundColor="#ff3131"/>
+                        <Btn onPress={() => nav.navigate('Accueil')} textButton={"Non, ramenez-moi à l'accueil..."} backgroundColor="black"/>
+                        <Btn onPress={() => deleteManga(manga_id)} textButton={'OUI ! POUBELLE !'} backgroundColor="#ff3131"/>
                     </View>
                 </View>
             </SafeAreaView>
@@ -128,16 +121,18 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 70,
+        marginTop: 40,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     userInfo: {
         alignItems: 'center',
         justifyContent: 'center',
     },
     logo: {
-        resizeMode: 'stretch',
-        width: 55,
-        height: 60,
+        resizeMode: 'contain',
+        width: 110,
+        height: 120,
     },
     textTitle: {
         color: 'black',
@@ -145,11 +140,12 @@ const styles = StyleSheet.create({
     },
     textTitle_welcome: {
         color: 'black',
-        fontSize: 30,
-        fontFamily:"GothamBook",
+        fontFamily: "GothamBook",
+        fontSize: 20,
     },
-    text:{
-        fontFamily:"GothamBook",
+    textStd:{
+        color: 'black',
+        fontFamily: "GothamBook",
     },
     input: {
         width: 'auto', // Adjust as needed

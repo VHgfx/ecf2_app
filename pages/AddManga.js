@@ -3,7 +3,7 @@ import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Tex
 //import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Btn from './component/button/bouton';
+import Btn from '../component/button/bouton';
 import { Picker } from '@react-native-picker/picker';
 
 import { useState, useEffect } from 'react';
@@ -11,8 +11,8 @@ import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 
 
-import Navbar from './component/navbar/navbar';
-import TitleTextColor from './component/title/title';
+import Navbar from '../component/navbar/navbar';
+import TitleTextColor from '../component/title/title';
 
 export default function AddManga() {
     const [titre, setTitre] = useState();
@@ -95,7 +95,7 @@ export default function AddManga() {
         <ImageBackground
             style={{ flex: 1 }}
             resizeMode='cover'
-            source={require('./assets/bg.jpg')}
+            source={require('../assets/bg.jpg')}
         >
             <SafeAreaView>
                 <View style={styles.container}>

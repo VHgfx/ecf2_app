@@ -3,19 +3,24 @@ import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Tex
 //import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Btn from './component/button/bouton';
+import Btn from '../component/button/bouton';
 
 import { useState, useEffect } from 'react';
 
 import { useFonts } from 'expo-font';
 
-import Navbar from './component/navbar/navbar';
-import TitleTextColor from './component/title/title';
+
+import Navbar from '../component/navbar/navbar';
+import TitleTextColor from '../component/title/title';
 
 export default function Connexion() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [data, setData] = useState();
+
+    const [userFirstname, setUserFirstname] = useState();
+    const [userLastname, setUserLastname] = useState();
+    const [userEmail, setUserEmail] = useState();
 
     const [token, setToken] = useState();
 
@@ -23,7 +28,11 @@ export default function Connexion() {
 
     useEffect(() => {
         getToken();
-    });
+        if(getToken()){
+            getProfil();
+        }
+        console.log(token);
+    }, [token]);
 
     // Fonction qui fonctionne avec l'import AsyncStorage
     // Permet de stocker des données sur le tel et les réutiliser
@@ -38,7 +47,6 @@ export default function Connexion() {
         const a = await AsyncStorage.getItem('token');
         if (a !== null) {
             setToken(a);
-            nav.navigate('Profil');
         }
     }
 
@@ -48,6 +56,26 @@ export default function Connexion() {
         await AsyncStorage.removeItem('token')
     }
 
+    const getProfil = async () => {
+        try {
+            const res = await fetch('http://192.168.1.59:3000/profil', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+            const userInfo = await res.json();
+
+            //setListManga(data);
+            console.log(userInfo);
+            setUserFirstname(userInfo.data[0].firstname);
+            setUserLastname(userInfo.data[0].lastname);
+            setUserEmail(userInfo.data[0].email);
+        } catch (error) {
+            console.log('Erreur 1:', error);
+        }
+    }
 
     const login = async () => {
         try {
@@ -77,54 +105,35 @@ export default function Connexion() {
     };
 
     const [loaded] = useFonts({
-        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
-        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
-        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
-    });
-    if (!loaded) {
-        return <Text>Chargement de la font</Text>;
-    }
+        "GothamLight": require('../assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('../assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('../assets/fonts/GothamBold.ttf'),
+      });
+      if (!loaded) {
+          return <Text>Chargement de la font</Text>;
+      }
+
 
     return (
         <ImageBackground
             style={{ flex: 1 }}
             resizeMode='cover'
-            source={require('./assets/bg.jpg')}
+            source={require('../assets/bg.jpg')}
         >
             <SafeAreaView>
                 <View style={styles.container}>
-                    <Image style={styles.logo} source={require('./assets/logo.png')} />
-
-                    <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
-                    <Text style={styles.textTitle_welcome}>BIENVENUE</Text>
-                    <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
-
-                    <View style={{ width: '80%' }}>
-                        <TextInput
-                            placeholder="Email"
-                            style={styles.input}
-                            /* Désactive la 1ere maj automatique */
-                            autoCapitalize='none'
-                            onChangeText={setEmail}
-                            value={email}
-                        />
-                        <TextInput
-                            placeholder="Password"
-                            style={styles.input}
-                            /* Désactive la 1ere maj automatique */
-                            autoCapitalize='none'
-                            onChangeText={setPassword}
-                            value={password}
-                            secureTextEntry={true}
-                        />
-                        <View style={styles.viewBtn}>
-                            <Btn onPress={() => login()} textButton={'SE CONNECTER'} backgroundColor="black" />
-                        </View>
-
+                    <Image style={styles.logo} source={require('../assets/logo.png')} />
+                    <View style={styles.container}>
+                        <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
+                        <Text style={styles.textTitle_welcome}>Mon profil</Text>
+                        <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
                     </View>
-
+                    <View style={[styles.userInfo, { width: '80%' }]}>
+                        <Text style={styles.text}>Prénom : {userFirstname}</Text>
+                        <Text style={styles.text}>Nom : {userLastname}</Text>
+                        <Text style={styles.text}>Email : {userEmail}</Text>
+                    </View>
                 </View>
-
 
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -140,10 +149,11 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: 10,
-        marginRight: 10,
-        marginTop: 50,
-        height: "80%"
+        paddingTop: 70,
+    },
+    userInfo:{
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     logo: {
         resizeMode: 'stretch',
@@ -157,19 +167,19 @@ const styles = StyleSheet.create({
     textTitle_welcome: {
         color: 'black',
         fontSize: 35,
-        fontFamily: "GothamBook",
+        fontFamily:"GothamBook",
     },
-    input: {
+    text:{
+        fontFamily:"GothamBook",
+    },
+    input:{
         width: 'auto', // Adjust as needed
         padding: 10,
         borderWidth: 1, // Consistent border size
         borderColor: 'black', // Black border color
         borderRadius: 4, // Optional: rounded corners
-        fontFamily: "GothamLight",
-        alignItems: 'center',
-        textAlign: 'center',
     },
-    viewBtn: {
+    viewBtn:{
         alignItems: 'center',
         width: '100%',
     },

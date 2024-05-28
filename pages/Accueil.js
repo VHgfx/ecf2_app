@@ -5,16 +5,23 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useState, useEffect } from 'react';
 
-
 import { useFonts } from 'expo-font';
 
-import Navbar from './component/navbar/navbar';
-import TitleTextColor from './component/title/title';
-import Btn from './component/button/bouton';
+// Gère le rafraichissement
+import { useIsFocused } from '@react-navigation/native';
 
+
+import Navbar from '../component/navbar/navbar';
+import TitleTextColor from '../component/title/title';
+import Btn from '../component/button/bouton';
+
+import { useRoute } from '@react-navigation/native';
 
 
 export default function Accueil() {
+    const isFocused = useIsFocused();
+    const route = useRoute();
+    const { msg } = route.params;
     const nav = useNavigation();
 
     const [listManga, setListManga] = useState([]);
@@ -34,15 +41,20 @@ export default function Accueil() {
         console.log(data.data);
     }
 
+    const sortedListManga = [...listManga].sort((a, b) => a.titre.localeCompare(b.titre));
+
+
     useEffect(() => {
-        getAllManga();
-    }, []);
+        if (isFocused) {
+          getAllManga();
+        }
+      }, [isFocused]);
 
 
     const [loaded] = useFonts({
-        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
-        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
-        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+        "GothamLight": require('../assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('../assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('../assets/fonts/GothamBold.ttf'),
       });
       if (!loaded) {
           return <Text>Chargement de la font</Text>;
@@ -53,14 +65,14 @@ export default function Accueil() {
         <ImageBackground
             style={{ flex: 1 }}
             resizeMode='cover'
-            source={require('./assets/bg.jpg')}
+            source={require('../assets/bg.jpg')}
         >
             <View style={styles.container}>
 
                   
                 <TitleTextColor>MANGA MANIA</TitleTextColor>
                 <ScrollView>
-                    {listManga.map((manga, index) => (
+                    {sortedListManga.map((manga, index) => (
                         <Pressable onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
                             <View key={index} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5}}>
                             <Text style={styles.listTitle}>{manga.titre}</Text>
