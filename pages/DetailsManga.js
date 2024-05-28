@@ -1,16 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
-//import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import Btn from '../component/button/bouton';
 
+import { useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { useRoute } from '@react-navigation/native';
 
-
+// Composants
+import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
+import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
 export default function DetailsManga() {
@@ -26,13 +26,12 @@ export default function DetailsManga() {
     const [mangaResume, setMangaResume] = useState();
     const [mangaAuteur, setMangaAuteur] = useState();
 
-
-
     const [token, setToken] = useState();
 
     const nav = useNavigation();
 
     useEffect(() => {
+        getToken();
         getOneManga(manga_id);
     }, []);
 
@@ -110,13 +109,15 @@ export default function DetailsManga() {
                         <Text style={styles.text}>Catégorie : {mangaCategorie}</Text>
                         <Text style={styles.text}>Résumé : {mangaResume}</Text>
                     </ScrollView>
+                    {token && (
                     <View style={styles.viewBtn}>
                         <Btn onPress={() => nav.navigate('DeleteManga', { manga_id })} textButton={'SUPPRIMER LE MANGA'} backgroundColor="#ff3131"/>
                     </View>
+                    )}
                 </View>
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Navbar />
+                {token ? <Navbar /> : <NavbarOffline />}
             </View>
         </ImageBackground>
 
@@ -147,6 +148,9 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 30,
         fontFamily:"GothamBook",
+        paddingLeft: "5%",
+        paddingRight: "5%",
+        textAlign:"center",
     },
     text:{
         fontFamily:"GothamBook",

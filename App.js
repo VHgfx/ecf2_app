@@ -53,8 +53,6 @@ export default function App() {
         <Stack.Screen options={{headerShown: false, headerTitle:"DetailsManga"}} name='DetailsManga' component={DetailsManga} initialParams={{manga_id}}/>
         <Stack.Screen options={{headerShown: false, headerTitle:"Inscription"}} name='Inscription' component={Inscription}/>
 
-
-
       </Stack.Navigator> 
     </NavigationContainer>
     

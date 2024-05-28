@@ -3,18 +3,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Navbar(){
+export default function NavbarOffline(){
 
     const nav = useNavigation();
-
-    const eraseToken = async() => {
-        await AsyncStorage.removeItem('token');
-        nav.navigate('Accueil');
-    }
 
     return(
         <>
@@ -29,12 +23,12 @@ export default function Navbar(){
                         <Text style={styles.btn}>Accueil</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.touchable}>
-                        <FontAwesome5 name="user" size={24} color='white' onPress={() => nav.navigate('Profil')}/>
+                        <FontAwesome5 name="user" size={24} color='white' onPress={() => nav.navigate('Connexion')}/>
                         <Text style={styles.btn}>Mon profil</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.touchable}  onPress={eraseToken}>
-                        <AntDesign name="logout" size={24} color='white'/>
-                        <Text style={styles.btn}>Déconnexion</Text>
+                    <TouchableOpacity style={styles.touchable}  onPress={() => nav.navigate('Connexion')}>
+                        <AntDesign name="login" size={24} color='white'/>
+                        <Text style={styles.btn}>Connexion</Text>
                     </TouchableOpacity>
                     
                 </View>

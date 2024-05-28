@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 
 import Navbar from '../component/navbar/navbar';
+import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
 export default function Inscription() {
@@ -147,7 +148,7 @@ export default function Inscription() {
 
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Navbar />
+                {token ? <Navbar /> : <NavbarOffline />}
             </View>
         </ImageBackground>
 

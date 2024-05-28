@@ -11,6 +11,7 @@ import { useFonts } from 'expo-font';
 
 
 import Navbar from '../component/navbar/navbar';
+import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
 export default function Connexion() {
@@ -137,7 +138,7 @@ export default function Connexion() {
 
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Navbar />
+                {token ? <Navbar /> : <NavbarOffline />}
             </View>
         </ImageBackground>
 

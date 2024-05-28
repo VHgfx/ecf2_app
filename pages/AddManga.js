@@ -12,6 +12,7 @@ import { useFonts } from 'expo-font';
 
 
 import Navbar from '../component/navbar/navbar';
+import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
 export default function AddManga() {
@@ -31,9 +32,17 @@ export default function AddManga() {
 
     const nav = useNavigation();
 
-    /*useEffect(() => {
+    useEffect(() => {
         getToken();
-    });*/
+    });
+
+    // On récupère la valeur stockée à tel Nom
+    const getToken = async () => {
+        const a = await AsyncStorage.getItem('token');
+        if (a !== null) {
+            setToken(a);
+        }
+    }
 
     // Fonction qui fonctionne avec l'import AsyncStorage
     // Permet de stocker des données sur le tel et les réutiliser
@@ -83,8 +92,7 @@ export default function AddManga() {
                 console.log(data.erreur);
             } else {
                 console.log(data.valid);
-                nav.navigate('Accueil');
-
+                nav.navigate('Accueil', {msg: "Le manga a bien été ajouté !"});
             }
         } catch (error) {
             console.log('Erreur 1:', error);
@@ -143,7 +151,7 @@ export default function AddManga() {
 
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Navbar />
+                {token ? <Navbar /> : <NavbarOffline />}
             </View>
         </ImageBackground>
 

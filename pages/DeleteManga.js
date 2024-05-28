@@ -11,6 +11,7 @@ import { useRoute } from '@react-navigation/native';
 
 
 import Navbar from '../component/navbar/navbar';
+import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
 export default function DeleteManga() {
@@ -33,7 +34,8 @@ export default function DeleteManga() {
     const nav = useNavigation();
 
     useEffect(() => {
-    }, []);
+        getToken();
+    });
 
     // Fonction qui fonctionne avec l'import AsyncStorage
     // Permet de stocker des données sur le tel et les réutiliser
@@ -69,7 +71,7 @@ export default function DeleteManga() {
 
             //setListManga(data);
             console.log(mangaInfo);
-            nav.navigate('Accueil');
+            nav.navigate('Accueil', {msg: "Manga supprimé :("});
 
         } catch (error) {
             console.log('Erreur 1:', error);
@@ -109,7 +111,7 @@ export default function DeleteManga() {
                 </View>
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Navbar />
+                {token ? <Navbar /> : <NavbarOffline />}
             </View>
         </ImageBackground>
 
