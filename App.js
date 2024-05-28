@@ -17,6 +17,7 @@ import DeleteManga from './DeleteManga';
 import {useState, useEffect} from 'react';
 import { useNavigation } from '@react-navigation/native';
 
+import { useFonts } from 'expo-font';
 
 export default function App() {
 
@@ -24,6 +25,17 @@ export default function App() {
   const [manga_id, setMangaId] = useState();
 
   const Stack = createStackNavigator();
+
+  
+  const [loaded] = useFonts({
+    "GothamLight": require('./assets/fonts/GothamLight.ttf'),
+    "GothamBook": require('./assets/fonts/GothamBook.ttf'),
+    "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+  });
+  if (!loaded) {
+      return <Text>Chargement de la font</Text>;
+  }
+
 
   return (
     <>

@@ -104,6 +104,16 @@ export default function Connexion() {
         }
     };
 
+    const [loaded] = useFonts({
+        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+      });
+      if (!loaded) {
+          return <Text>Chargement de la font</Text>;
+      }
+
+
     return (
         <ImageBackground
             style={{ flex: 1 }}
@@ -115,7 +125,7 @@ export default function Connexion() {
                     <Image style={styles.logo} source={require('./assets/logo.png')} />
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
-                        <Text style={styles.textTitle_welcome}>BIENVENUE</Text>
+                        <Text style={styles.textTitle_welcome}>Mon profil</Text>
                         <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
                     </View>
                     <View style={[styles.userInfo, { width: '80%' }]}>
@@ -147,8 +157,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         resizeMode: 'stretch',
-        width: 55,
-        height: 60,
+        width: 110,
+        height: 120,
     },
     textTitle: {
         color: 'black',
@@ -157,6 +167,10 @@ const styles = StyleSheet.create({
     textTitle_welcome: {
         color: 'black',
         fontSize: 35,
+        fontFamily:"GothamBook",
+    },
+    text:{
+        fontFamily:"GothamBook",
     },
     input:{
         width: 'auto', // Adjust as needed

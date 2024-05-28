@@ -76,6 +76,16 @@ export default function DeleteManga() {
         }
     }
 
+    
+    const [loaded] = useFonts({
+        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+      });
+      if (!loaded) {
+          return <Text>Chargement de la font</Text>;
+      }
+
 
     return (
         <ImageBackground
@@ -90,7 +100,7 @@ export default function DeleteManga() {
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>Suppression en cours</Text>
                         <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
-                        <Text style={styles.text}>Êtes-vous sûr(e) de vouloir supprimer ce manga ? :(</Text>
+                        <Text style={styles.textStd}>Êtes-vous sûr(e) de vouloir supprimer ce manga ? :(</Text>
                     </View>
                     <View style={styles.viewBtn}>
                         <Btn onPress={() => nav.navigate('Accueil')} textButton={"Non, ramenez-moi à l'accueil..."} backgroundColor="black"/>
@@ -111,7 +121,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 70,
+        marginTop: 40,
         paddingLeft: 20,
         paddingRight: 20,
     },
@@ -120,9 +130,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     logo: {
-        resizeMode: 'stretch',
-        width: 55,
-        height: 60,
+        resizeMode: 'contain',
+        width: 110,
+        height: 120,
     },
     textTitle: {
         color: 'black',
@@ -130,7 +140,12 @@ const styles = StyleSheet.create({
     },
     textTitle_welcome: {
         color: 'black',
-        fontSize: 25,
+        fontFamily: "GothamBook",
+        fontSize: 20,
+    },
+    textStd:{
+        color: 'black',
+        fontFamily: "GothamBook",
     },
     input: {
         width: 'auto', // Adjust as needed

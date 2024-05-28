@@ -39,6 +39,15 @@ export default function Accueil() {
     }, []);
 
 
+    const [loaded] = useFonts({
+        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+      });
+      if (!loaded) {
+          return <Text>Chargement de la font</Text>;
+      }
+    
 
     return (
         <ImageBackground
@@ -54,8 +63,8 @@ export default function Accueil() {
                     {listManga.map((manga, index) => (
                         <Pressable onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
                             <View key={index} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5}}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{manga.titre}</Text>
-                            <Text style={{ fontStyle: 'italic' }}>{manga.auteur}</Text>
+                            <Text style={styles.listTitle}>{manga.titre}</Text>
+                            <Text style={styles.listText}>{manga.auteur}</Text>
                             </View>
                         </Pressable>
                         
@@ -85,4 +94,11 @@ const styles = StyleSheet.create({
 
         height:'80%'
     },
+    listTitle: {
+        fontFamily: "GothamBold",
+        fontSize: 16
+    }, 
+    listText: {
+        fontFamily: "GothamLight",
+    }
 });

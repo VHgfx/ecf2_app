@@ -80,7 +80,16 @@ export default function DetailsManga() {
             console.log('Erreur 1:', error);
         }
     }
-
+    
+    
+    const [loaded] = useFonts({
+        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+      });
+      if (!loaded) {
+          return <Text>Chargement de la font</Text>;
+      }
 
     return (
         <ImageBackground
@@ -136,7 +145,11 @@ const styles = StyleSheet.create({
     },
     textTitle_welcome: {
         color: 'black',
-        fontSize: 35,
+        fontSize: 30,
+        fontFamily:"GothamBook",
+    },
+    text:{
+        fontFamily:"GothamBook",
     },
     input: {
         width: 'auto', // Adjust as needed

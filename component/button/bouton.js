@@ -1,8 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 
+import { useFonts } from 'expo-font';
 
 export default function Btn({ style, onPress, textButton, disabled, backgroundColor }) {
+
+    const [loaded] = useFonts({
+        "GothamRegular": require('../../assets/fonts/GothamMedium.ttf'),
+        "GothamBold": require('../../assets/fonts/GothamBold.ttf'),
+    });
+    if (!loaded) {
+        return <Text>Chargement de la font</Text>;
+    }
 
     return (
         <TouchableOpacity 
@@ -25,6 +34,6 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'GothamBold',
     },
 });

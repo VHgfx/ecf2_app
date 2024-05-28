@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 
 import { useFonts } from 'expo-font';
 
-
 import Navbar from './component/navbar/navbar';
 import TitleTextColor from './component/title/title';
 
@@ -76,6 +75,15 @@ export default function Connexion() {
             console.log('Erreur 1:', error);
         }
     };
+
+    const [loaded] = useFonts({
+        "GothamLight": require('./assets/fonts/GothamLight.ttf'),
+        "GothamBook": require('./assets/fonts/GothamBook.ttf'),
+        "GothamBold": require('./assets/fonts/GothamBold.ttf'),
+    });
+    if (!loaded) {
+        return <Text>Chargement de la font</Text>;
+    }
 
     return (
         <ImageBackground
@@ -149,6 +157,7 @@ const styles = StyleSheet.create({
     textTitle_welcome: {
         color: 'black',
         fontSize: 35,
+        fontFamily: "GothamBook",
     },
     input: {
         width: 'auto', // Adjust as needed
@@ -156,6 +165,9 @@ const styles = StyleSheet.create({
         borderWidth: 1, // Consistent border size
         borderColor: 'black', // Black border color
         borderRadius: 4, // Optional: rounded corners
+        fontFamily: "GothamLight",
+        alignItems: 'center',
+        textAlign: 'center',
     },
     viewBtn: {
         alignItems: 'center',
