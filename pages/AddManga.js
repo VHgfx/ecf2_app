@@ -102,7 +102,7 @@ export default function AddManga() {
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>Ajouter un manga</Text>
-                        <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
+                        <Text style={{ color: 'black' }}>{data && data.erreur !== undefined ? data.erreur : ""}</Text>
                     </View>
                     <View style={{ width: '90%' }}>
                         <Picker
