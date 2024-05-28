@@ -32,7 +32,7 @@ export default function Navbar(){
                         <FontAwesome5 name="user" size={24} color='white' onPress={() => nav.navigate('Profil')}/>
                         <Text style={styles.btn}>Mon profil</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.touchable}  onPress={eraseToken}>
+                    <TouchableOpacity style={styles.touchable}  onPress={() => nav.navigate('Logout')}>
                         <AntDesign name="logout" size={24} color='white'/>
                         <Text style={styles.btn}>Déconnexion</Text>
                     </TouchableOpacity>

@@ -3,9 +3,14 @@ import { TouchableOpacity, ScrollView, SafeAreaView, Image, ImageBackground, Sty
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { useRoute } from '@react-navigation/native';
+
+import { AntDesign } from "@expo/vector-icons";
+
+// Gère le rafraichissement
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 
 // Composants
 import Btn from '../component/button/bouton';
@@ -14,6 +19,8 @@ import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
 export default function DetailsManga() {
+    const isFocused = useIsFocused();
+
     const route = useRoute();
     const { manga_id } = route.params;
 
@@ -26,28 +33,43 @@ export default function DetailsManga() {
     const [mangaResume, setMangaResume] = useState();
     const [mangaAuteur, setMangaAuteur] = useState();
 
+    const [mangaNbSuivi, setMangaNbSuivi] = useState();
+
+    const [mangaSuiviPerso, setMangaSuiviPerso] = useState(false);
+
     const [token, setToken] = useState();
 
     const nav = useNavigation();
 
-    useEffect(() => {
+    /*useEffect(() => {
         getToken();
         getOneManga(manga_id);
-    }, []);
+    }, []);*/
 
-    // Fonction qui fonctionne avec l'import AsyncStorage
-    // Permet de stocker des données sur le tel et les réutiliser
-    const storeToken = async (value) => {
-        // On attend 2 paramètres : Nom et valeur
-        await AsyncStorage.setItem('token', value)
-        setToken(value)
-    }
 
     // On récupère la valeur stockée à tel Nom
     const getToken = async () => {
         const a = await AsyncStorage.getItem('token');
-        if (a !== null) {
-            setToken(a);
+        setToken(a);
+        // console.log("Token: " + a);
+    }
+
+    const getSuiviPerso = async (manga_id) => {
+        console.log("Lancement getSuivi");
+        const a = await AsyncStorage.getItem('token');
+        try {
+            const res = await fetch(`http://192.168.1.59:3000/suivi/get/${manga_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': a
+                }
+            });
+            const suiviPersoInfo = await res.json();
+
+            console.log(suiviPersoInfo);
+        } catch (error) {
+            console.log('Erreur 1:', error);
         }
     }
 
@@ -68,27 +90,55 @@ export default function DetailsManga() {
             const mangaInfo = await res.json();
 
             //setListManga(data);
-            console.log(mangaInfo);
+            //console.log(mangaInfo);
             setMangaTitre(mangaInfo.data.titre);
             setMangaResume(mangaInfo.data.resume);
             setMangaAuteur(mangaInfo.data.auteur);
             setMangaCategorie(mangaInfo.data.nom_categorie);
-
+            setMangaNbSuivi(mangaInfo.data.suivi_count);
 
         } catch (error) {
             console.log('Erreur 1:', error);
         }
     }
-    
-    
+
+
     const [loaded] = useFonts({
         "GothamLight": require('../assets/fonts/GothamLight.ttf'),
         "GothamBook": require('../assets/fonts/GothamBook.ttf'),
         "GothamBold": require('../assets/fonts/GothamBold.ttf'),
-      });
-      if (!loaded) {
-          return <Text>Chargement de la font</Text>;
-      }
+    });
+    if (!loaded) {
+        return <Text>Chargement de la font</Text>;
+    }
+
+    /*useFocusEffect(
+        React.useCallback(() => {
+            const fetchData = async () => {
+                await getOneManga(manga_id);
+                await getToken();
+                if (token !== undefined) {
+                    await getSuiviPerso(manga_id);
+                }
+            };
+
+            fetchData();
+        }, [isFocused])
+    );*/
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            await getOneManga(manga_id);
+            const tokenValue = await getToken(); // Assuming getToken returns the token value
+            await getSuiviPerso(manga_id);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+      
+        fetchData();
+      }, [isFocused]);
 
     return (
         <ImageBackground
@@ -103,6 +153,9 @@ export default function DetailsManga() {
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>{mangaTitre}</Text>
                         <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
+                        <Text style={styles.textSuivi}>
+                            {mangaNbSuivi} {mangaNbSuivi > 1 ? 'personnes suivent' : 'personne suit'} ce manga
+                        </Text>
                     </View>
                     <ScrollView style={[{ width: '80%' }]}>
                         <Text style={styles.text}>Auteur : {mangaAuteur}</Text>
@@ -110,9 +163,9 @@ export default function DetailsManga() {
                         <Text style={styles.text}>Résumé : {mangaResume}</Text>
                     </ScrollView>
                     {token && (
-                    <View style={styles.viewBtn}>
-                        <Btn onPress={() => nav.navigate('DeleteManga', { manga_id })} textButton={'SUPPRIMER LE MANGA'} backgroundColor="#ff3131"/>
-                    </View>
+                        <View style={styles.viewBtn}>
+                            <Btn onPress={() => nav.navigate('DeleteManga', { manga_id })} textButton={'SUPPRIMER LE MANGA'} backgroundColor="#ff3131" />
+                        </View>
                     )}
                 </View>
             </SafeAreaView>
@@ -147,13 +200,17 @@ const styles = StyleSheet.create({
     textTitle_welcome: {
         color: 'black',
         fontSize: 30,
-        fontFamily:"GothamBook",
+        fontFamily: "GothamBook",
         paddingLeft: "5%",
         paddingRight: "5%",
-        textAlign:"center",
+        textAlign: "center",
     },
-    text:{
-        fontFamily:"GothamBook",
+    text: {
+        fontFamily: "GothamBook",
+    },
+    textSuivi: {
+        fontFamily: "GothamBook",
+        marginBottom: 10,
     },
     input: {
         width: 'auto', // Adjust as needed

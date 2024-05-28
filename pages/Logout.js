@@ -14,36 +14,14 @@ import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
-export default function DeleteManga() {
-    const route = useRoute();
-    const { manga_id } = route.params;
-
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [data, setData] = useState();
-
-    const [mangaTitre, setMangaTitre] = useState();
-    const [mangaCategorie, setMangaCategorie] = useState();
-    const [mangaResume, setMangaResume] = useState();
-    const [mangaAuteur, setMangaAuteur] = useState();
-
-
-
+export default function Logout() {
     const [token, setToken] = useState();
 
     const nav = useNavigation();
 
     useEffect(() => {
         getToken();
-    },[]);
-
-    // Fonction qui fonctionne avec l'import AsyncStorage
-    // Permet de stocker des données sur le tel et les réutiliser
-    const storeToken = async (value) => {
-        // On attend 2 paramètres : Nom et valeur
-        await AsyncStorage.setItem('token', value)
-        setToken(value)
-    }
+    }, []);
 
     // On récupère la valeur stockée à tel Nom
     const getToken = async () => {
@@ -53,40 +31,33 @@ export default function DeleteManga() {
         }
     }
 
+    const returnHome = async () => {
+        const tokenErased = await eraseToken();
+        if (tokenErased) {
+            nav.navigate('Accueil');
+        }
+    };
     // Supprimer l'item
     // /?/ : On peut mettre un paramètre rappelable si on veut supprimer plusieurs items différents
     const eraseToken = async () => {
-        await AsyncStorage.removeItem('token')
-    }
-
-    const deleteManga = async (manga_id) => {
         try {
-            const res = await fetch(`http://192.168.1.59:3000/manga/delete/${manga_id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            const mangaInfo = await res.json();
-
-            //setListManga(data);
-            console.log(mangaInfo);
-            nav.navigate('Accueil', {msg: "Manga supprimé :("});
-
+            await AsyncStorage.removeItem('token');
+            console.log('Token erased');
+            return true;
         } catch (error) {
-            console.log('Erreur 1:', error);
+            console.log('Error erasing token:', error);
+            return false;
         }
     }
 
-    
     const [loaded] = useFonts({
         "GothamLight": require('../assets/fonts/GothamLight.ttf'),
         "GothamBook": require('../assets/fonts/GothamBook.ttf'),
         "GothamBold": require('../assets/fonts/GothamBold.ttf'),
-      });
-      if (!loaded) {
-          return <Text>Chargement de la font</Text>;
-      }
+    });
+    if (!loaded) {
+        return <Text>Chargement de la font</Text>;
+    }
 
 
     return (
@@ -100,18 +71,17 @@ export default function DeleteManga() {
                     <Image style={styles.logo} source={require('../assets/logo.png')} />
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
-                        <Text style={styles.textTitle_welcome}>Suppression en cours</Text>
-                        <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
-                        <Text style={styles.textStd}>Êtes-vous sûr(e) de vouloir supprimer ce manga ? :(</Text>
+                        <Text style={styles.textTitle_welcome}>Déconnexion</Text>
+                        <Text style={styles.textStd}>Voulez-vous vous déconnecter ?</Text>
                     </View>
                     <View style={styles.viewBtn}>
-                        <Btn onPress={() => deleteManga(manga_id)} textButton={'Oui !'} backgroundColor="#ff3131"/>
-                        <Btn onPress={() => nav.navigate('Accueil')} textButton={"Non, ramenez-moi à l'accueil..."} backgroundColor="black"/>
+                        <Btn onPress={() => returnHome()} textButton={'Oui'} backgroundColor="#ff3131" />
+                        <Btn onPress={() => nav.navigate('Accueil')} textButton={"Non"} backgroundColor="black" />
                     </View>
                 </View>
             </SafeAreaView>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                {token ? <Navbar /> : <NavbarOffline />}
+                <Navbar />
             </View>
         </ImageBackground>
 
@@ -145,7 +115,7 @@ const styles = StyleSheet.create({
         fontFamily: "GothamBook",
         fontSize: 20,
     },
-    textStd:{
+    textStd: {
         color: 'black',
         fontFamily: "GothamBook",
     },

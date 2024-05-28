@@ -11,7 +11,7 @@ import AddManga from './pages/AddManga';
 import DetailsManga from './pages/DetailsManga';
 import DeleteManga from './pages/DeleteManga';
 import Inscription from './pages/Inscription';
-
+import Logout from './pages/Logout';
 
 
 
@@ -52,6 +52,8 @@ export default function App() {
         <Stack.Screen options={{headerShown: false, headerTitle:"DeleteManga"}} name='DeleteManga' component={DeleteManga} initialParams={{manga_id}}/>
         <Stack.Screen options={{headerShown: false, headerTitle:"DetailsManga"}} name='DetailsManga' component={DetailsManga} initialParams={{manga_id}}/>
         <Stack.Screen options={{headerShown: false, headerTitle:"Inscription"}} name='Inscription' component={Inscription}/>
+        <Stack.Screen options={{headerShown: false, headerTitle:"Logout"}} name='Logout' component={Logout}/>
+
 
       </Stack.Navigator> 
     </NavigationContainer>

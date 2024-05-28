@@ -29,7 +29,7 @@ export default function Inscription() {
 
     useEffect(() => {
         getToken();
-    });
+    },[]);
 
     // Fonction qui fonctionne avec l'import AsyncStorage
     // Permet de stocker des données sur le tel et les réutiliser

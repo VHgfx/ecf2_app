@@ -14,7 +14,7 @@ import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
-export default function Connexion() {
+export default function Profil() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [data, setData] = useState();

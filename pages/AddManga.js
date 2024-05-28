@@ -34,7 +34,7 @@ export default function AddManga() {
 
     useEffect(() => {
         getToken();
-    });
+    },[]);
 
     // On récupère la valeur stockée à tel Nom
     const getToken = async () => {
@@ -110,7 +110,7 @@ export default function AddManga() {
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>Ajouter un manga</Text>
-                        <Text style={{ color: 'black' }}>{data && data.erreur !== undefined ? data.erreur : ""}</Text>
+                        <Text style={{ color: 'red' }}>{data && data.erreur !== undefined ? data.erreur : ""}</Text>
                     </View>
                     <View style={{ width: '90%' }}>
                         <Picker

@@ -22,13 +22,16 @@ export default function Connexion() {
     const [password, setPassword] = useState();
     const [data, setData] = useState();
 
+    const [erreur, setErreur] = useState(null);
+    const [errMsg, setErrMsg] = useState();
+
     const [token, setToken] = useState();
 
     const nav = useNavigation();
 
     useEffect(() => {
         getToken();
-    });
+    },[]);
 
     // Fonction qui fonctionne avec l'import AsyncStorage
     // Permet de stocker des données sur le tel et les réutiliser
@@ -53,32 +56,52 @@ export default function Connexion() {
         await AsyncStorage.removeItem('token')
     }
 
+    const checkForm = () => {
+        const newErrors = {};
+        if (!email) {
+          newErrors.email = 'Email is required';
+        }
+        if (!password) {
+          newErrors.password = 'Password is required';
+        }
+        setErreur("Veuillez remplir tous les champs");
+        return Object.keys(newErrors).length === 0;
+    };
+
 
     const login = async () => {
-        try {
-            //Constante res qui attend un fetch
-            const res = await fetch('http://192.168.1.59:3000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                // stringify correspond à un json.decode en php
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await res.json();
-
-            setData(data);
-            if (data.erreur !== undefined) {
-                console.log(data.erreur);
-            } else {
-                eraseToken();
-                storeToken(data.token);
-                console.log(data.valid);
+        if(checkForm()){
+            setErrMsg(null);
+            try {
+                //Constante res qui attend un fetch
+                const res = await fetch('http://192.168.1.59:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // stringify correspond à un json.decode en php
+                    body: JSON.stringify({ email, password }),
+                });
+    
+                const data = await res.json();
+    
+                setData(data);
+                if (data.erreur !== undefined) {
+                    console.log(data.erreur);
+                } else {
+                    eraseToken();
+                    storeToken(data.token);
+                    console.log(data.valid);
+                    nav.navigate('Profil');
+                }
+            } catch (error) {
+                console.log('Erreur 1:', error);
             }
-        } catch (error) {
-            console.log('Erreur 1:', error);
+        } else {
+            console.log('Validation failed');
+            setErrMsg("Veuillez remplir tous les champs");
         }
+        
     };
 
     const [loaded] = useFonts({
@@ -103,6 +126,7 @@ export default function Connexion() {
                     <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                     <Text style={styles.textTitle_welcome}>Connexion</Text>
                     <Text style={{ color: 'black' }}>{msg !== undefined ? msg : ""}</Text>
+                    <Text style={{ color: 'red' }}>{errMsg !== undefined ? errMsg : ""}</Text>
 
                     <View style={{ width: '80%' }}>
                         <TextInput

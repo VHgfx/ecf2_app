@@ -2,13 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, TouchableOpacity, ScrollView, Pressable, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Gère le rafraichissement
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 
 // Composants
 import Navbar from '../component/navbar/navbar';
@@ -29,26 +29,15 @@ export default function Accueil() {
 
     const [listManga, setListManga] = useState([]);
 
-    // Fonction qui fonctionne avec l'import AsyncStorage
-    // Permet de stocker des données sur le tel et les réutiliser
-    const storeToken = async (value) => {
-        // On attend 2 paramètres : Nom et valeur
-        await AsyncStorage.setItem('token', value)
-        setToken(value)
-    }
-
-    // On récupère la valeur stockée à tel Nom
-    const getToken = async () => {
-        const a = await AsyncStorage.getItem('token');
-        if (a !== null) {
-            setToken(a);
-        }
-    }
+    const checkToken = async () => {
+        const storedToken = await AsyncStorage.getItem('token');
+        setToken(storedToken);
+    };
 
     // Supprimer l'item
     // /?/ : On peut mettre un paramètre rappelable si on veut supprimer plusieurs items différents
     const eraseToken = async () => {
-        await AsyncStorage.removeItem('token')
+        await AsyncStorage.removeItem('token');
     }
 
     const getAllManga = async () => {
@@ -63,19 +52,19 @@ export default function Accueil() {
         const data = await res.json();
 
         setListManga(data.data);
-        console.log(data.data);
+        //console.log(data.data);
     }
 
     const sortedListManga = [...listManga].sort((a, b) => a.titre.localeCompare(b.titre));
 
+   
 
-    useEffect(() => {
-        getToken();
-        console.log(token);
-        if (isFocused) {
+    useFocusEffect(
+        React.useCallback(() => {
           getAllManga();
-        }
-      }, [isFocused]);
+          checkToken();
+        }, [isFocused])
+      );
 
 
     const [loaded] = useFonts({
@@ -103,8 +92,8 @@ export default function Accueil() {
                     {sortedListManga.map((manga, index) => (
                         <Pressable onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
                             <View key={index} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5}}>
-                            <Text style={styles.listTitle}>{manga.titre}</Text>
-                            <Text style={styles.listText}>{manga.auteur}</Text>
+                            <Text style={styles.listTitle} key={`${index}-${manga.id}`}>{manga.titre}</Text>
+                            <Text style={styles.listText} key={`${index}-${manga.id}-auteur`}>{manga.auteur}</Text>
                             </View>
                         </Pressable>
                         
