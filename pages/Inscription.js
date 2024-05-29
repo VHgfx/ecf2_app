@@ -1,10 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
-import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
+import { SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useNavigation } from '@react-navigation/native';
-
 import { useState, useEffect } from 'react';
-
 import { useFonts } from 'expo-font';
 
 // Composants

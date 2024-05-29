@@ -1,6 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { TouchableOpacity, Pressable, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
-//import Btn from './component/button/bouton';
+import { Pressable, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +7,6 @@ import { AntDesign } from "@expo/vector-icons";
 import { useFonts } from 'expo-font';
 
 // Composants
-import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
@@ -66,10 +63,10 @@ export default function Profil() {
         await AsyncStorage.removeItem('token')
     }
 
-     // Récupération : Exp de token
-     const getTokenInfo = async () => {
+    // Récupération : Exp de token
+    const getTokenInfo = async () => {
         const storedToken = await AsyncStorage.getItem('token');
-        if(storedToken){
+        if (storedToken) {
             try {
                 const response = await fetch(`${config.apiUrl}/getTokenExp`, {
                     method: 'GET',
@@ -78,7 +75,7 @@ export default function Profil() {
                         'Content-Type': 'application/json'
                     }
                 });
-        
+
                 const data = await response.json();
 
                 console.log(data);
@@ -87,7 +84,7 @@ export default function Profil() {
                 console.log('Token expiré');
                 nav.navigate('Expired');
             }
-        }  
+        }
     };
 
     // Récupère le profil
@@ -133,9 +130,7 @@ export default function Profil() {
         }
     }
 
-    // Arrange la liste des suivis alphabétiquement
-
-    // Récupère le nombre de manga suivi
+    // Get : Nombre de manga suivi
     const getStatNb = async () => {
         console.log("Start : getStatNb");
         try {
@@ -147,13 +142,8 @@ export default function Profil() {
                 }
             });
             const statInfo = await res.json();
-
             console.log(statInfo.valid);
-            
             setStatNb(statInfo.valid);
-            
-            
-
         } catch (error) {
             console.log('Erreur getStatNb:', error);
         }
@@ -196,7 +186,7 @@ export default function Profil() {
                             {sortedListSuivi.length > 0 ? (
                                 sortedListSuivi.map((manga, index) => (
                                     <Pressable key={`${index}-${manga.id}-Pressable`} onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
-                                        <View key={`${index}-${manga.id}-View`} style={{ paddingBottom: 10, paddingLeft:20, paddingRight:20, backgroundColor: 'white', borderRadius: 5 }}>
+                                        <View key={`${index}-${manga.id}-View`} style={{ paddingBottom: 10, paddingLeft: 20, paddingRight: 20, backgroundColor: 'white', borderRadius: 5 }}>
                                             <Text style={styles.listTitle}>{manga.titre}</Text>
                                             <Text style={styles.listText}>{manga.auteur}</Text>
                                         </View>
@@ -205,7 +195,7 @@ export default function Profil() {
                             ) : (
                                 <View style={styles.container}>
                                     <Text style={styles.noResultsText}>Vous ne suivez aucun manga</Text>
-                                    <AntDesign name="hearto" size={24} color='red'/>
+                                    <AntDesign name="hearto" size={24} color='red' />
                                     <Text>Pensez à les suivre sur leur page</Text>
                                 </View>
                             )}
@@ -233,7 +223,7 @@ const styles = StyleSheet.create({
     userInfo: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom:20,
+        marginBottom: 20,
     },
     logo: {
         resizeMode: 'stretch',

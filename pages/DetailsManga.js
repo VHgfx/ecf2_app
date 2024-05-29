@@ -154,8 +154,6 @@ export default function DetailsManga() {
             });
             const mangaInfo = await res.json();
 
-            //setListManga(data);
-            //console.log(mangaInfo);
             setMangaTitre(mangaInfo.data.titre);
             setMangaResume(mangaInfo.data.resume);
             setMangaAuteur(mangaInfo.data.auteur);

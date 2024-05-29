@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
-//import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
@@ -199,11 +198,11 @@ const styles = StyleSheet.create({
         fontSize: 25,
     },
     input: {
-        width: 'auto', // Adjust as needed
+        width: 'auto', 
         padding: 10,
-        borderWidth: 1, // Consistent border size
-        borderColor: 'black', // Black border color
-        borderRadius: 4, // Optional: rounded corners
+        borderWidth: 1, 
+        borderColor: 'black', 
+        borderRadius: 4,
     },
     viewBtn: {
         alignItems: 'center',

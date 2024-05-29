@@ -1,15 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
-import { TouchableOpacity, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
-//import Btn from './component/button/bouton';
+
+import { SafeAreaView, Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Btn from '../component/button/bouton';
 
 import { useState, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { useRoute } from '@react-navigation/native';
 
-
+// Composants
+import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';

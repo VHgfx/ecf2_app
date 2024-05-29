@@ -193,11 +193,11 @@ const styles = StyleSheet.create({
         fontFamily: "GothamBook",
     },
     input: {
-        width: 'auto', // Adjust as needed
+        width: 'auto', 
         padding: 10,
-        borderWidth: 1, // Consistent border size
-        borderColor: 'black', // Black border color
-        borderRadius: 0, // Optional: rounded corners
+        borderWidth: 1, 
+        borderColor: 'black', 
+        borderRadius: 0,
         fontFamily: "GothamLight",
         alignItems: 'center',
         textAlign: 'center',
