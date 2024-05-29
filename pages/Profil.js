@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
+import { TouchableOpacity, Pressable, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
 //import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Btn from '../component/button/bouton';
 
 import { useState, useEffect } from 'react';
+
+import { AntDesign } from "@expo/vector-icons";
 
 import { useFonts } from 'expo-font';
 
@@ -23,14 +25,21 @@ export default function Profil() {
     const [userLastname, setUserLastname] = useState();
     const [userEmail, setUserEmail] = useState();
 
+    const [statUser, setStatUser] = useState([]);
+    const [statNb, setStatNb] = useState();
+
+
     const [token, setToken] = useState();
 
     const nav = useNavigation();
 
     useEffect(() => {
         getToken();
-        if(getToken()){
+
+        if (getToken()) {
             getProfil();
+            getStatSuivi();
+            getStatNb();
         }
         console.log(token);
     }, [token]);
@@ -57,15 +66,16 @@ export default function Profil() {
         await AsyncStorage.removeItem('token')
     }
 
+    // Récupère le profil
     const getProfil = async () => {
         try {
             const res = await fetch('http://192.168.1.59:3000/profil', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    }
-                });
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                }
+            });
             const userInfo = await res.json();
 
             //setListManga(data);
@@ -74,46 +84,64 @@ export default function Profil() {
             setUserLastname(userInfo.data[0].lastname);
             setUserEmail(userInfo.data[0].email);
         } catch (error) {
-            console.log('Erreur 1:', error);
+            console.log('getProfil:', error);
         }
     }
 
-    const login = async () => {
+    // Récupère la liste des mangas suivi
+    const getStatSuivi = async () => {
+        console.log("Start : getStatSuivi");
         try {
-            //Constante res qui attend un fetch
-            const res = await fetch('http://192.168.1.59:3000/login', {
-                method: 'POST',
+            const res = await fetch('http://192.168.1.59:3000/suivi/liste', {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                // stringify correspond à un json.decode en php
-                body: JSON.stringify({ email, password }),
+                    'Authorization': token
+                }
             });
+            const statInfo = await res.json();
 
-            const data = await res.json();
+            console.log(statInfo.valid);
+            setStatUser(statInfo.valid);
 
-            setData(data);
-            if (data.erreur !== undefined) {
-                console.log(data.erreur);
-            } else {
-                eraseToken();
-                storeToken(data.token);
-                console.log(data.valid);
-            }
         } catch (error) {
-            console.log('Erreur 1:', error);
+            console.log('Erreur getStatSuivi:', error);
         }
-    };
+    }
+
+    // Arrange la liste des suivis alphabétiquement
+
+    // Récupère le nombre de manga suivi
+    const getStatNb = async () => {
+        console.log("Start : getStatNb");
+        try {
+            const res = await fetch('http://192.168.1.59:3000/suivi/statUser', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                }
+            });
+            const statInfo = await res.json();
+
+            console.log(statInfo.valid);
+            setStatNb(statInfo.valid);
+
+        } catch (error) {
+            console.log('Erreur getStatNb:', error);
+        }
+    }
 
     const [loaded] = useFonts({
         "GothamLight": require('../assets/fonts/GothamLight.ttf'),
         "GothamBook": require('../assets/fonts/GothamBook.ttf'),
         "GothamBold": require('../assets/fonts/GothamBold.ttf'),
-      });
-      if (!loaded) {
-          return <Text>Chargement de la font</Text>;
-      }
+    });
+    if (!loaded) {
+        return <Text>Chargement de la font</Text>;
+    }
 
+    const sortedListSuivi = [...statUser].sort((a, b) => a.titre.localeCompare(b.titre));
 
     return (
         <ImageBackground
@@ -127,16 +155,36 @@ export default function Profil() {
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>Mon profil</Text>
-                        <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
+                        <Text style={{ color: 'red' }}>{data && data.error !== undefined ? data.error : ""}</Text>
                     </View>
                     <View style={[styles.userInfo, { width: '80%' }]}>
                         <Text style={styles.text}>Prénom : {userFirstname}</Text>
                         <Text style={styles.text}>Nom : {userLastname}</Text>
                         <Text style={styles.text}>Email : {userEmail}</Text>
+                        <Text style={styles.text}>Vous suivez actuellement : </Text>
+                        <Text style={styles.nb}>{statNb} {statNb > 1 ? 'mangas' : 'manga'}</Text>
                     </View>
-                    <View>
-                        
-                    </View>
+                    <ScrollView>
+                        <ScrollView>
+                            {sortedListSuivi.length > 0 ? (
+                                sortedListSuivi.map((manga, index) => (
+                                    <Pressable key={`${index}-${manga.id}-Pressable`} onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
+                                        <View key={`${index}-${manga.id}-View`} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5 }}>
+                                            <Text style={styles.listTitle}>{manga.titre}</Text>
+                                            <Text style={styles.listText}>{manga.auteur}</Text>
+                                        </View>
+                                    </Pressable>
+                                ))
+                            ) : (
+                                <View style={styles.container}>
+                                    <Text style={styles.noResultsText}>Vous ne suivez aucun manga</Text>
+                                    <AntDesign name="hearto" size={24} color='red'/>
+                                    <Text>Pensez à les suivre sur leur page</Text>
+                                </View>
+                            )}
+                        </ScrollView>
+
+                    </ScrollView>
                 </View>
 
             </SafeAreaView>
@@ -153,9 +201,9 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 70,
+        paddingTop: 50,
     },
-    userInfo:{
+    userInfo: {
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -171,21 +219,32 @@ const styles = StyleSheet.create({
     textTitle_welcome: {
         color: 'black',
         fontSize: 35,
-        fontFamily:"GothamBook",
+        fontFamily: "GothamBook",
     },
-    text:{
-        fontFamily:"GothamBook",
+    text: {
+        fontFamily: "GothamBook",
     },
-    input:{
+    input: {
         width: 'auto', // Adjust as needed
         padding: 10,
         borderWidth: 1, // Consistent border size
         borderColor: 'black', // Black border color
         borderRadius: 4, // Optional: rounded corners
     },
-    viewBtn:{
+    viewBtn: {
         alignItems: 'center',
         width: '100%',
     },
+    nb: {
+        fontFamily: "GothamBold",
+        fontSize: 16
+    },
+    listTitle: {
+        fontFamily: "GothamBook",
+        fontSize: 16
+    },
+    listText: {
+        fontFamily: "GothamLight",
+    }
 
 });

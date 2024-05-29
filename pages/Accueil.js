@@ -90,9 +90,9 @@ export default function Accueil() {
                 <Text style={{ color: 'black' }}>{msg !== undefined ? msg : ""}</Text>
                 <ScrollView>
                     {sortedListManga.map((manga, index) => (
-                        <Pressable onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
-                            <View key={index} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5}}>
-                            <Text style={styles.listTitle} key={`${index}-${manga.id}`}>{manga.titre}</Text>
+                        <Pressable key={`${index}-Pressable`} onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
+                            <View key={`${index}-View`} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5}}>
+                            <Text style={styles.listTitle} key={`${index}-${manga.id}-titre`}>{manga.titre}</Text>
                             <Text style={styles.listText} key={`${index}-${manga.id}-auteur`}>{manga.auteur}</Text>
                             </View>
                         </Pressable>

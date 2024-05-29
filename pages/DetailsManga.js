@@ -180,21 +180,6 @@ export default function DetailsManga() {
         return <Text>Chargement de la font</Text>;
     }
 
-    /*useFocusEffect(
-        React.useCallback(() => {
-            const fetchData = async () => {
-                await getOneManga(manga_id);
-                await getToken();
-                if (token !== undefined) {
-                    await getSuiviPerso(manga_id);
-                }
-            };
-
-            fetchData();
-        }, [isFocused])
-
-        {mangaSuiviPerso ? 'Vous suivez ce manga' : 'Vous ne suivez pas ce manga'}
-    );*/
 
     useEffect(() => {
         const fetchData = async () => {
