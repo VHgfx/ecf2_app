@@ -1,17 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
-//import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Btn from '../component/button/bouton';
 
 import { useState, useEffect } from 'react';
 
 import { useFonts } from 'expo-font';
 
+// Composants
+import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
+
+// Pour adresse API
+import config from '../config';
 
 export default function Inscription() {
     const [email, setEmail] = useState();
@@ -58,7 +61,7 @@ export default function Inscription() {
     const inscription = async () => {
         try {
             //Constante res qui attend un fetch
-            const res = await fetch('http://192.168.1.59:3000/addUser', {
+            const res = await fetch(`${config.apiUrl}/addUser`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -103,10 +106,11 @@ export default function Inscription() {
                     <Image style={styles.logo} source={require('../assets/logo.png')} />
 
                     <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
-                    <Text style={styles.textTitle_welcome}>BIENVENUE</Text>
+                    <Text style={styles.textTitle_welcome}>Inscription</Text>
                     <Text style={{ color: 'black' }}>{data && data.erreur !== undefined ? data.erreur : ""}</Text>
-
+                    
                     <View style={{ width: '80%' }}>
+                        <Text style={styles.text}>Avec un compte tu pourras : ajouter, supprimer, suivre un manga et voir la liste des suivis sur ton profil !</Text>
                         <TextInput
                             placeholder="Email"
                             style={styles.input}
@@ -167,8 +171,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         resizeMode: 'stretch',
-        width: 110,
-        height: 120,
+        width: 55,
+        height: 60,
     },
     textTitle: {
         color: 'black',
@@ -179,12 +183,18 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontFamily: "GothamBook",
     },
+    text: {
+        color: 'black',
+        fontSize: 14,
+        fontFamily: "GothamBook",
+        marginBottom:10,
+    },
     input: {
         width: 'auto', // Adjust as needed
-        padding: 10,
+        padding: 5,
         borderWidth: 1, // Consistent border size
         borderColor: 'black', // Black border color
-        borderRadius: 4, // Optional: rounded corners
+        borderRadius: 0, // Optional: rounded corners
         fontFamily: "GothamLight",
         alignItems: 'center',
         textAlign: 'center',

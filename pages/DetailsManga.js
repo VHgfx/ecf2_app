@@ -20,14 +20,15 @@ import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
+// Pour adresse API
+import config from '../config';
+
 export default function DetailsManga() {
     const isFocused = useIsFocused();
 
     const route = useRoute();
     const { manga_id } = route.params;
 
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
     const [data, setData] = useState();
 
     const [mangaTitre, setMangaTitre] = useState();
@@ -46,12 +47,6 @@ export default function DetailsManga() {
 
     const nav = useNavigation();
 
-    /*useEffect(() => {
-        getToken();
-        getOneManga(manga_id);
-    }, []);*/
-
-
     // On récupère la valeur stockée à tel Nom
     const getToken = async () => {
         const a = await AsyncStorage.getItem('token');
@@ -59,11 +54,12 @@ export default function DetailsManga() {
         // console.log("Token: " + a);
     }
 
+    // Récupération : Si manga suivi par user connecté
     const getSuiviPerso = async (manga_id) => {
         console.log("Lancement getSuivi");
         const a = await AsyncStorage.getItem('token');
         try {
-            const res = await fetch(`http://192.168.1.59:3000/suivi/get/${manga_id}`, {
+            const res = await fetch(`${config.apiUrl}/suivi/get/${manga_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,14 +75,14 @@ export default function DetailsManga() {
         }
     }
 
-    
+    // Ajout : Suivi pour user connecté
     const addFollow = async () => {
         console.log("Lancement addFollow");
         console.log("addFollow > Manga_id : " + manga_id);
         const a = await AsyncStorage.getItem('token');
         try {
             //Constante res qui attend un fetch
-            const res = await fetch(`http://192.168.1.59:3000/suivi/add/${manga_id}`, {
+            const res = await fetch(`${config.apiUrl}/suivi/add/${manga_id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,19 +100,19 @@ export default function DetailsManga() {
             } else {
                 console.log("Manga suivi");
                 setRefresh(!refresh); // Trigger re-render
-                // nav.navigate('Accueil', {msg: "Le manga a été followed !"});
             }
         } catch (error) {
             console.log('Erreur 1:', error);
         }
     };
 
+    // Delete : Suivi pour user connecté
     const deleteFollow = async () => {
         console.log("Lancement deleteFollow");
         const a = await AsyncStorage.getItem('token');
         try {
             //Constante res qui attend un fetch
-            const res = await fetch(`http://192.168.1.59:3000/suivi/remove/${manga_id}`, {
+            const res = await fetch(`${config.apiUrl}/suivi/remove/${manga_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,9 +143,10 @@ export default function DetailsManga() {
         await AsyncStorage.removeItem('token')
     }
 
+    // Récupération : Infos 1 manga à partir manga_id
     const getOneManga = async (manga_id) => {
         try {
-            const res = await fetch(`http://192.168.1.59:3000/manga/${manga_id}`, {
+            const res = await fetch(`${config.apiUrl}/manga/${manga_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -207,10 +204,12 @@ export default function DetailsManga() {
                     <View style={styles.container}>
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>{mangaTitre}</Text>
-                        <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
-                        <Text style={styles.textSuivi}>
-                            {mangaSuiviPerso ? <BtnFollow onPress={() => deleteFollow()}/> : <BtnNoFollow  onPress={() => addFollow()}/>}
-                        </Text>
+                        <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>                 
+                        {token && (
+                            <Text style={styles.textSuivi}>
+                                {mangaSuiviPerso ? <BtnFollow onPress={() => deleteFollow()}/> : <BtnNoFollow  onPress={() => addFollow()}/>}
+                            </Text>
+                        )}
                         <Text style={styles.textSuivi}>
                             {mangaNbSuivi} {mangaNbSuivi > 1 ? 'personnes suivent' : 'personne suit'} ce manga
                         </Text>

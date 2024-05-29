@@ -1,19 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
-//import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useNavigation } from '@react-navigation/native';
-import Btn from '../component/button/bouton';
-
 import { useState, useEffect } from 'react';
-
 import { useFonts } from 'expo-font';
-
 import { useRoute } from '@react-navigation/native';
 
+// Composants
+import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
+
+// Pour adresse API
+import config from '../config';
 
 export default function Connexion() {
     const route = useRoute();
@@ -74,7 +75,7 @@ export default function Connexion() {
             setErrMsg(null);
             try {
                 //Constante res qui attend un fetch
-                const res = await fetch('http://192.168.1.59:3000/login', {
+                const res = await fetch(`${config.apiUrl}/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -179,8 +180,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         resizeMode: 'stretch',
-        width: 110,
-        height: 120,
+        width: 55,
+        height: 60,
     },
     textTitle: {
         color: 'black',
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 1, // Consistent border size
         borderColor: 'black', // Black border color
-        borderRadius: 4, // Optional: rounded corners
+        borderRadius: 0, // Optional: rounded corners
         fontFamily: "GothamLight",
         alignItems: 'center',
         textAlign: 'center',

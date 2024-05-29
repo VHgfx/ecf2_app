@@ -3,17 +3,19 @@ import { TouchableOpacity, SafeAreaView, Image, ImageBackground, StyleSheet, Tex
 //import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import Btn from '../component/button/bouton';
 import { Picker } from '@react-native-picker/picker';
 
 import { useState, useEffect } from 'react';
-
 import { useFonts } from 'expo-font';
 
-
+// Composants
+import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
+
+// Pour adresse API
+import config from '../config';
 
 export default function AddManga() {
     const [titre, setTitre] = useState();
@@ -21,12 +23,10 @@ export default function AddManga() {
     const [resume, setResume] = useState();
     const [id_categories, setCategorie] = useState();
 
-    const [categories, setCategories] = useState([]); // state to hold categories
-    const [selectedCategory, setSelectedCategory] = useState('');
+    // Besoin imposer array pour picker (select option)
+    const [categories, setCategories] = useState([]);
 
     const [data, setData] = useState();
-
-    const [listManga, setListManga] = useState();
 
     const [token, setToken] = useState();
 
@@ -44,17 +44,10 @@ export default function AddManga() {
         }
     }
 
-    // Fonction qui fonctionne avec l'import AsyncStorage
-    // Permet de stocker des données sur le tel et les réutiliser
-    const storeToken = async (value) => {
-        // On attend 2 paramètres : Nom et valeur
-        await AsyncStorage.setItem('token', value)
-        setToken(value)
-    }
-
+    // Récupération : Nom de toutes les catégories
     const getAllCategories = async () => {
         try {
-            const res = await fetch('http://192.168.1.59:3000/manga/categories', {
+            const res = await fetch(`${config.apiUrl}/manga/categories`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,14 +62,14 @@ export default function AddManga() {
     };
 
     useEffect(() => {
-        getAllCategories(); // fetch categories when component mounts
+        getAllCategories(); 
     }, []);
 
-
+    // Ajout : Un manga
     const addManga = async () => {
         try {
             //Constante res qui attend un fetch
-            const res = await fetch('http://192.168.1.59:3000/manga/add', {
+            const res = await fetch(`${config.apiUrl}/manga/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

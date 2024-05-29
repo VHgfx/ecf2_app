@@ -12,7 +12,7 @@ import DetailsManga from './pages/DetailsManga';
 import DeleteManga from './pages/DeleteManga';
 import Inscription from './pages/Inscription';
 import Logout from './pages/Logout';
-
+import Expired from './pages/Expired';
 
 
 import {useState, useEffect} from 'react';
@@ -53,6 +53,7 @@ export default function App() {
         <Stack.Screen options={{headerShown: false, headerTitle:"DetailsManga"}} name='DetailsManga' component={DetailsManga} initialParams={{manga_id}}/>
         <Stack.Screen options={{headerShown: false, headerTitle:"Inscription"}} name='Inscription' component={Inscription}/>
         <Stack.Screen options={{headerShown: false, headerTitle:"Logout"}} name='Logout' component={Logout}/>
+        <Stack.Screen options={{headerShown: false, headerTitle:"Expired"}} name='Expired' component={Expired}/>
 
 
       </Stack.Navigator> 

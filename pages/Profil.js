@@ -2,23 +2,22 @@ import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, Pressable, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
 //import Btn from './component/button/bouton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useNavigation } from '@react-navigation/native';
-import Btn from '../component/button/bouton';
-
 import { useState, useEffect } from 'react';
-
 import { AntDesign } from "@expo/vector-icons";
-
 import { useFonts } from 'expo-font';
 
-
+// Composants
+import Btn from '../component/button/bouton';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
 
+// Pour adresse API
+import config from '../config';
+
 export default function Profil() {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
     const [data, setData] = useState();
 
     const [userFirstname, setUserFirstname] = useState();
@@ -69,7 +68,7 @@ export default function Profil() {
     // Récupère le profil
     const getProfil = async () => {
         try {
-            const res = await fetch('http://192.168.1.59:3000/profil', {
+            const res = await fetch(`${config.apiUrl}/profil`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +91,7 @@ export default function Profil() {
     const getStatSuivi = async () => {
         console.log("Start : getStatSuivi");
         try {
-            const res = await fetch('http://192.168.1.59:3000/suivi/liste', {
+            const res = await fetch(`${config.apiUrl}/suivi/liste`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,7 +114,7 @@ export default function Profil() {
     const getStatNb = async () => {
         console.log("Start : getStatNb");
         try {
-            const res = await fetch('http://192.168.1.59:3000/suivi/statUser', {
+            const res = await fetch(`${config.apiUrl}/suivi/statUser`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,7 +124,10 @@ export default function Profil() {
             const statInfo = await res.json();
 
             console.log(statInfo.valid);
+            
             setStatNb(statInfo.valid);
+            
+            
 
         } catch (error) {
             console.log('Erreur getStatNb:', error);
@@ -169,7 +171,7 @@ export default function Profil() {
                             {sortedListSuivi.length > 0 ? (
                                 sortedListSuivi.map((manga, index) => (
                                     <Pressable key={`${index}-${manga.id}-Pressable`} onPress={() => nav.navigate('DetailsManga', { manga_id: manga.id })}>
-                                        <View key={`${index}-${manga.id}-View`} style={{ paddingBottom: 10, backgroundColor: 'white', borderRadius: 5 }}>
+                                        <View key={`${index}-${manga.id}-View`} style={{ paddingBottom: 10, paddingLeft:20, paddingRight:20, backgroundColor: 'white', borderRadius: 5 }}>
                                             <Text style={styles.listTitle}>{manga.titre}</Text>
                                             <Text style={styles.listText}>{manga.auteur}</Text>
                                         </View>
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
     userInfo: {
         alignItems: 'center',
         justifyContent: 'center',
+        marginBottom:20,
     },
     logo: {
         resizeMode: 'stretch',
