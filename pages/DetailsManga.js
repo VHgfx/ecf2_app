@@ -14,6 +14,8 @@ import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 
 // Composants
 import Btn from '../component/button/bouton';
+import BtnFollow from '../component/button/follow';
+import BtnNoFollow from '../component/button/nofollow';
 import Navbar from '../component/navbar/navbar';
 import NavbarOffline from '../component/navbar/navbar-offline';
 import TitleTextColor from '../component/title/title';
@@ -36,6 +38,9 @@ export default function DetailsManga() {
     const [mangaNbSuivi, setMangaNbSuivi] = useState();
 
     const [mangaSuiviPerso, setMangaSuiviPerso] = useState(false);
+
+    // Pour trigger le refresh
+    const [refresh, setRefresh] = useState(false); 
 
     const [token, setToken] = useState();
 
@@ -67,11 +72,74 @@ export default function DetailsManga() {
             });
             const suiviPersoInfo = await res.json();
 
-            console.log(suiviPersoInfo);
+            console.log("isSuivi ? : " + suiviPersoInfo.valid);
+            setMangaSuiviPerso(suiviPersoInfo.valid);
         } catch (error) {
             console.log('Erreur 1:', error);
         }
     }
+
+    
+    const addFollow = async () => {
+        console.log("Lancement addFollow");
+        console.log("addFollow > Manga_id : " + manga_id);
+        const a = await AsyncStorage.getItem('token');
+        try {
+            //Constante res qui attend un fetch
+            const res = await fetch(`http://192.168.1.59:3000/suivi/add/${manga_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': a
+                },
+                // stringify correspond à un json.decode en php
+                // body: JSON.stringify({ titre, auteur, resume, id_categories }),
+            });
+
+            const data = await res.json();
+
+            setData(data);
+            if (data.erreur !== undefined) {
+                console.log(data.erreur);
+            } else {
+                console.log("Manga suivi");
+                setRefresh(!refresh); // Trigger re-render
+                // nav.navigate('Accueil', {msg: "Le manga a été followed !"});
+            }
+        } catch (error) {
+            console.log('Erreur 1:', error);
+        }
+    };
+
+    const deleteFollow = async () => {
+        console.log("Lancement deleteFollow");
+        const a = await AsyncStorage.getItem('token');
+        try {
+            //Constante res qui attend un fetch
+            const res = await fetch(`http://192.168.1.59:3000/suivi/remove/${manga_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': a
+                },
+                // stringify correspond à un json.decode en php
+                // body: JSON.stringify({ titre, auteur, resume, id_categories }),
+            });
+
+            const data = await res.json();
+
+            setData(data);
+            if (data.erreur !== undefined) {
+                console.log(data.erreur);
+            } else {
+                console.log("Arrêt suivi de manga");
+                setRefresh(!refresh); // Trigger re-render
+                // nav.navigate('Accueil', {msg: "Le manga a été followed !"});
+            }
+        } catch (error) {
+            console.log('Erreur 1:', error);
+        }
+    };
 
     // Supprimer l'item
     // /?/ : On peut mettre un paramètre rappelable si on veut supprimer plusieurs items différents
@@ -124,6 +192,8 @@ export default function DetailsManga() {
 
             fetchData();
         }, [isFocused])
+
+        {mangaSuiviPerso ? 'Vous suivez ce manga' : 'Vous ne suivez pas ce manga'}
     );*/
 
     useEffect(() => {
@@ -138,7 +208,7 @@ export default function DetailsManga() {
         };
       
         fetchData();
-      }, [isFocused]);
+      }, [isFocused, refresh]);
 
     return (
         <ImageBackground
@@ -153,6 +223,9 @@ export default function DetailsManga() {
                         <TitleTextColor style={styles.textTitle}>MANGA MANIA</TitleTextColor>
                         <Text style={styles.textTitle_welcome}>{mangaTitre}</Text>
                         <Text style={{ color: 'black' }}>{data && data.error !== undefined ? data.error : ""}</Text>
+                        <Text style={styles.textSuivi}>
+                            {mangaSuiviPerso ? <BtnFollow onPress={() => deleteFollow()}/> : <BtnNoFollow  onPress={() => addFollow()}/>}
+                        </Text>
                         <Text style={styles.textSuivi}>
                             {mangaNbSuivi} {mangaNbSuivi > 1 ? 'personnes suivent' : 'personne suit'} ce manga
                         </Text>

@@ -134,6 +134,9 @@ export default function Profil() {
                         <Text style={styles.text}>Nom : {userLastname}</Text>
                         <Text style={styles.text}>Email : {userEmail}</Text>
                     </View>
+                    <View>
+                        
+                    </View>
                 </View>
 
             </SafeAreaView>
