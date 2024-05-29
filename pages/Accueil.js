@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, TouchableOpacity, ScrollView, Pressable, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Platform, TouchableOpacity, ActivityIndicator, ScrollView, Pressable, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
@@ -30,6 +30,8 @@ export default function Accueil() {
     const route = useRoute();
     const { msg } = route.params;
     const nav = useNavigation();
+
+    const [loading, setLoading] = useState(true);
 
     const [token, setToken] = useState();
 
@@ -95,7 +97,12 @@ export default function Accueil() {
         "GothamBold": require('../assets/fonts/GothamBold.ttf'),
     });
     if (!loaded) {
-        return <Text>Chargement de la font</Text>;
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text style={styles.loadingText}>Chargement des fonts...</Text>
+            </View>
+        );
     }
 
 
@@ -144,6 +151,16 @@ export default function Accueil() {
 }
 
 const styles = StyleSheet.create({
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#000',
+    },
     container: {
         alignItems: 'center',
         justifyContent: 'center',
