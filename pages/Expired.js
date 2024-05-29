@@ -1,5 +1,3 @@
-// Page non utilisée
-
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, ScrollView, SafeAreaView, Image, ImageBackground, StyleSheet, Text, View, TextInput } from 'react-native';
 //import Btn from './component/button/bouton';

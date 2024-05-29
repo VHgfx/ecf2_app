@@ -34,6 +34,7 @@ export default function Profil() {
 
     useEffect(() => {
         getToken();
+        getTokenInfo();
 
         if (getToken()) {
             getProfil();
@@ -64,6 +65,30 @@ export default function Profil() {
     const eraseToken = async () => {
         await AsyncStorage.removeItem('token')
     }
+
+     // Récupération : Exp de token
+     const getTokenInfo = async () => {
+        const storedToken = await AsyncStorage.getItem('token');
+        if(storedToken){
+            try {
+                const response = await fetch(`${config.apiUrl}/getTokenExp`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': storedToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+        
+                const data = await response.json();
+
+                console.log(data);
+                return data.exp;
+            } catch (error) {
+                console.log('Token expiré');
+                nav.navigate('Expired');
+            }
+        }  
+    };
 
     // Récupère le profil
     const getProfil = async () => {

@@ -34,6 +34,7 @@ export default function AddManga() {
 
     useEffect(() => {
         getToken();
+        getTokenInfo();
     },[]);
 
     // On récupère la valeur stockée à tel Nom
@@ -43,6 +44,30 @@ export default function AddManga() {
             setToken(a);
         }
     }
+
+    // Récupération : Exp de token
+    const getTokenInfo = async () => {
+        const storedToken = await AsyncStorage.getItem('token');
+        if(storedToken){
+            try {
+                const response = await fetch(`${config.apiUrl}/getTokenExp`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': storedToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+        
+                const data = await response.json();
+
+                console.log(data);
+                return data.exp;
+            } catch (error) {
+                console.log('Token expiré');
+                nav.navigate('Expired');
+            }
+        }  
+    };
 
     // Récupération : Nom de toutes les catégories
     const getAllCategories = async () => {
